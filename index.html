@@ -10,33 +10,64 @@
     <main class="stage" aria-label="文字が静かに降るリラクゼーション画面">
       <div class="sky" id="sky" aria-hidden="true"></div>
 
-      <section class="control-panel" aria-label="表示する文字列の設定">
-        <div class="brand">
-          <p>Letterdrop</p>
-          <span>slow words for a quiet screen</span>
+      <section class="drawer drawer-settings" id="settingsDrawer" aria-label="表示する文字列の設定">
+        <button class="drawer-tab" id="settingsToggle" type="button" aria-expanded="false">
+          設定
+        </button>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="brand">
+              <p>Letterdrop</p>
+              <span>slow words for a quiet screen</span>
+            </div>
+            <button class="ghost-button" data-close="settingsDrawer" type="button">閉じる</button>
+          </div>
+
+          <label class="field">
+            <span>文字セット</span>
+            <select id="presetSelect">
+              <option value="calm">静けさ</option>
+              <option value="focus">集中</option>
+              <option value="night">夜</option>
+              <option value="create">創作</option>
+              <option value="custom">カスタム</option>
+            </select>
+          </label>
+
+          <div class="custom-entry" id="customEntry">
+            <label class="field">
+              <span>追加する文字列</span>
+              <textarea
+                id="customWords"
+                rows="5"
+                placeholder="1行に1つずつ入力します&#10;例: 深呼吸&#10;余白&#10;ここにいる"
+              ></textarea>
+            </label>
+
+            <button class="apply-button" id="saveWords" type="button">保存して反映</button>
+            <p class="save-status" id="saveStatus" aria-live="polite"></p>
+          </div>
         </div>
+      </section>
 
-        <label class="field">
-          <span>文字セット</span>
-          <select id="presetSelect">
-            <option value="calm">静けさ</option>
-            <option value="focus">集中</option>
-            <option value="night">夜</option>
-            <option value="create">創作</option>
-            <option value="custom">カスタム</option>
-          </select>
-        </label>
+      <section class="drawer drawer-list" id="listDrawer" aria-label="カスタム文字列の一覧">
+        <button class="drawer-tab" id="listToggle" type="button" aria-expanded="false">
+          一覧
+        </button>
 
-        <label class="field">
-          <span>独自文字列</span>
-          <textarea
-            id="customWords"
-            rows="5"
-            placeholder="1行に1つずつ入力します&#10;例: 深呼吸&#10;余白&#10;ここにいる"
-          ></textarea>
-        </label>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="brand">
+              <p>カスタム文字列</p>
+              <span>保存した言葉を確認・削除できます</span>
+            </div>
+            <button class="ghost-button" data-close="listDrawer" type="button">閉じる</button>
+          </div>
 
-        <button class="apply-button" id="applyWords" type="button">反映</button>
+          <ul class="word-list" id="customWordList"></ul>
+          <p class="empty-message" id="emptyMessage">まだ保存された文字列はありません。</p>
+        </div>
       </section>
     </main>
 

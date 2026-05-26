@@ -3,7 +3,7 @@
   font-family:
     "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui,
     sans-serif;
-  --panel-bg: rgba(10, 16, 20, 0.68);
+  --panel-bg: rgba(10, 16, 20, 0.72);
   --panel-border: rgba(230, 239, 235, 0.16);
   --text-main: #eff7f4;
   --text-muted: #b7c8c1;
@@ -33,6 +33,10 @@ button,
 select,
 textarea {
   font: inherit;
+}
+
+button {
+  cursor: pointer;
 }
 
 .stage {
@@ -89,21 +93,60 @@ textarea {
   }
 }
 
-.control-panel {
+.drawer {
   position: fixed;
-  right: clamp(16px, 3vw, 32px);
-  bottom: clamp(16px, 3vw, 32px);
+  right: -344px;
   z-index: 2;
+  width: min(344px, calc(100vw - 64px));
+  color: var(--text-main);
+  transition: right 220ms ease;
+}
+
+.drawer.is-open {
+  right: clamp(12px, 2vw, 24px);
+}
+
+.drawer-settings {
+  top: clamp(18px, 4vh, 42px);
+}
+
+.drawer-list {
+  top: calc(clamp(18px, 4vh, 42px) + 200px);
+}
+
+.drawer-tab {
+  position: absolute;
+  top: 14px;
+  left: -48px;
+  width: 48px;
+  min-height: 74px;
+  padding: 10px 8px;
+  color: var(--text-main);
+  background: rgba(10, 16, 20, 0.72);
+  border: 1px solid var(--panel-border);
+  border-right: 0;
+  border-radius: 8px 0 0 8px;
+  writing-mode: vertical-rl;
+  letter-spacing: 0;
+  backdrop-filter: blur(18px);
+}
+
+.panel {
   display: grid;
-  width: min(360px, calc(100vw - 32px));
   gap: 14px;
   padding: 18px;
-  color: var(--text-main);
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(18px);
+}
+
+.panel-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .brand {
@@ -122,7 +165,8 @@ textarea {
   font-size: 0.78rem;
 }
 
-.field {
+.field,
+.custom-entry {
   display: grid;
   gap: 7px;
 }
@@ -130,6 +174,11 @@ textarea {
 .field span {
   color: var(--text-muted);
   font-size: 0.78rem;
+}
+
+.field option {
+  color: rgba(0, 0, 0, 0.9);
+  background: #ffffff;
 }
 
 select,
@@ -156,9 +205,11 @@ textarea {
 }
 
 select:focus,
-textarea:focus {
+textarea:focus,
+button:focus-visible {
   border-color: rgba(185, 222, 212, 0.72);
   box-shadow: 0 0 0 3px rgba(185, 222, 212, 0.12);
+  outline: none;
 }
 
 .apply-button {
@@ -168,20 +219,88 @@ textarea:focus {
   background: var(--accent);
   border: 0;
   border-radius: 6px;
-  cursor: pointer;
 }
 
-.apply-button:active {
+.apply-button:active,
+.ghost-button:active,
+.delete-button:active {
   transform: translateY(1px);
 }
 
+.ghost-button,
+.delete-button {
+  min-height: 34px;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+}
+
+.ghost-button {
+  flex: 0 0 auto;
+  padding: 0 10px;
+}
+
+.save-status,
+.empty-message {
+  min-height: 1.2em;
+  margin: -4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.word-list {
+  display: grid;
+  max-height: min(46vh, 420px);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.word-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 8px 8px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.word-list span {
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+
+.delete-button {
+  padding: 0 10px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
 @media (max-width: 680px) {
-  .control-panel {
-    right: 12px;
-    bottom: 12px;
-    left: 12px;
-    width: auto;
-    padding: 14px;
+  .drawer {
+    right: calc(-1 * min(344px, calc(100vw - 64px)));
+    width: calc(100vw - 64px);
+  }
+
+  .drawer.is-open {
+    right: 10px;
+  }
+
+  .drawer-tab {
+    left: -46px;
+    width: 46px;
+  }
+
+  .drawer-list {
+    top: calc(clamp(18px, 4vh, 42px) + 120px);
   }
 
   .falling-word {
