@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Letterdrop</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="stage" aria-label="文字が静かに降るリラクゼーション画面">
+      <div class="sky" id="sky" aria-hidden="true"></div>
+
+      <section class="control-panel" aria-label="表示する文字列の設定">
+        <div class="brand">
+          <p>Letterdrop</p>
+          <span>slow words for a quiet screen</span>
+        </div>
+
+        <label class="field">
+          <span>文字セット</span>
+          <select id="presetSelect">
+            <option value="calm">静けさ</option>
+            <option value="focus">集中</option>
+            <option value="night">夜</option>
+            <option value="create">創作</option>
+            <option value="custom">カスタム</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>独自文字列</span>
+          <textarea
+            id="customWords"
+            rows="5"
+            placeholder="1行に1つずつ入力します&#10;例: 深呼吸&#10;余白&#10;ここにいる"
+          ></textarea>
+        </label>
+
+        <button class="apply-button" id="applyWords" type="button">反映</button>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

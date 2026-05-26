@@ -1,0 +1,192 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui,
+    sans-serif;
+  --panel-bg: rgba(10, 16, 20, 0.68);
+  --panel-border: rgba(230, 239, 235, 0.16);
+  --text-main: #eff7f4;
+  --text-muted: #b7c8c1;
+  --accent: #b9ded4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(107, 151, 145, 0.28), transparent 32rem),
+    radial-gradient(circle at 82% 24%, rgba(157, 122, 111, 0.24), transparent 30rem),
+    linear-gradient(150deg, #071013 0%, #172424 48%, #11181f 100%);
+}
+
+button,
+select,
+textarea {
+  font: inherit;
+}
+
+.stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+}
+
+.sky::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(7, 16, 19, 0.18), transparent 28%, rgba(7, 16, 19, 0.44)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.018) 0,
+      rgba(255, 255, 255, 0.018) 1px,
+      transparent 1px,
+      transparent 130px
+    );
+}
+
+.falling-word {
+  position: absolute;
+  top: -10vh;
+  left: var(--x);
+  color: rgba(243, 250, 247, var(--alpha));
+  font-size: var(--size);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-shadow: 0 0 18px rgba(214, 241, 232, 0.22);
+  white-space: nowrap;
+  user-select: none;
+  animation: fall var(--duration) linear forwards;
+  animation-delay: var(--delay);
+}
+
+@keyframes fall {
+  from {
+    transform: translate3d(-50%, -14vh, 0);
+  }
+
+  to {
+    transform: translate3d(calc(-50% + var(--drift)), 118vh, 0);
+  }
+}
+
+.control-panel {
+  position: fixed;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 2;
+  display: grid;
+  width: min(360px, calc(100vw - 32px));
+  gap: 14px;
+  padding: 18px;
+  color: var(--text-main);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: grid;
+  gap: 2px;
+}
+
+.brand p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.brand span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+select,
+textarea {
+  width: 100%;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  outline: none;
+}
+
+select {
+  height: 42px;
+  padding: 0 12px;
+}
+
+textarea {
+  min-height: 118px;
+  max-height: 220px;
+  resize: vertical;
+  padding: 11px 12px;
+  line-height: 1.6;
+}
+
+select:focus,
+textarea:focus {
+  border-color: rgba(185, 222, 212, 0.72);
+  box-shadow: 0 0 0 3px rgba(185, 222, 212, 0.12);
+}
+
+.apply-button {
+  height: 42px;
+  color: #10201d;
+  font-weight: 700;
+  background: var(--accent);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.apply-button:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 680px) {
+  .control-panel {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    width: auto;
+    padding: 14px;
+  }
+
+  .falling-word {
+    max-width: 78vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
