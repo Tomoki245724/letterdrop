@@ -45,6 +45,11 @@
               ></textarea>
             </label>
 
+            <label class="file-field">
+              <span>ファイルから追加</span>
+              <input id="wordFile" type="file" accept=".txt,.md,.csv,.tsv,text/plain,text/markdown,text/csv" />
+            </label>
+
             <button class="apply-button" id="saveWords" type="button">保存して反映</button>
             <p class="save-status" id="saveStatus" aria-live="polite"></p>
           </div>
@@ -71,6 +76,7 @@
       </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

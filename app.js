@@ -12,6 +12,7 @@ const fallbackCustomWords = ["ゆっくり", "呼吸", "余白"];
 const sky = document.querySelector("#sky");
 const presetSelect = document.querySelector("#presetSelect");
 const customWords = document.querySelector("#customWords");
+const wordFile = document.querySelector("#wordFile");
 const saveWords = document.querySelector("#saveWords");
 const saveStatus = document.querySelector("#saveStatus");
 const customEntry = document.querySelector("#customEntry");
@@ -26,6 +27,9 @@ let customWordItems = [];
 let activeWords = [...presets.calm];
 let spawnTimer = null;
 let statusTimer = null;
+let tokenizerPromise = null;
+
+const kuromojiDictionaryPath = "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/";
 
 const randomBetween = (min, max) => Math.random() * (max - min) + min;
 
@@ -35,6 +39,100 @@ function normalizeWords(words) {
 
 function parseTextAreaWords() {
   return normalizeWords(customWords.value.split(/\r?\n/));
+}
+
+function appendWordsToTextArea(words) {
+  const currentWords = parseTextAreaWords();
+  const nextWords = normalizeWords([...currentWords, ...words]);
+
+  customWords.value = nextWords.join("\n");
+  presetSelect.value = "custom";
+  updateCustomEntryVisibility();
+}
+
+function parseDelimitedWords(text, delimiter) {
+  const separators = delimiter === "," ? /[,\r\n]+/ : /[\t\r\n]+/;
+  return normalizeWords(text.split(separators));
+}
+
+function stripMarkdown(text) {
+  return text
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]*`/g, " ")
+    .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^>\s?/gm, "")
+    .replace(/^[\s>*+-]*\[[ xX]]\s+/gm, "")
+    .replace(/^[\s>*+-]+/gm, "")
+    .replace(/[*_~|#]/g, " ");
+}
+
+function getKuromojiTokenizer() {
+  if (tokenizerPromise) return tokenizerPromise;
+
+  tokenizerPromise = new Promise((resolve, reject) => {
+    if (!window.kuromoji) {
+      reject(new Error("kuromoji.js を読み込めませんでした"));
+      return;
+    }
+
+    window.kuromoji.builder({ dicPath: kuromojiDictionaryPath }).build((error, tokenizer) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve(tokenizer);
+    });
+  });
+
+  return tokenizerPromise;
+}
+
+async function extractNounsFromText(text) {
+  const tokenizer = await getKuromojiTokenizer();
+  const tokens = tokenizer.tokenize(stripMarkdown(text));
+
+  return normalizeWords(
+    tokens
+      .filter((token) => token.pos === "名詞" && token.pos_detail_1 === "一般")
+      .map((token) => token.surface_form),
+  );
+}
+
+function getFileExtension(fileName) {
+  const match = fileName.toLowerCase().match(/\.([^.]+)$/);
+  return match ? match[1] : "";
+}
+
+function readFileAsUtf8(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
+    reader.addEventListener("error", () => reject(reader.error));
+    reader.readAsText(file, "UTF-8");
+  });
+}
+
+async function extractWordsFromFile(file) {
+  const text = await readFileAsUtf8(file);
+  const extension = getFileExtension(file.name);
+
+  if (extension === "csv") {
+    return parseDelimitedWords(text, ",");
+  }
+
+  if (extension === "tsv") {
+    return parseDelimitedWords(text, "\t");
+  }
+
+  if (extension === "txt" || extension === "md") {
+    return extractNounsFromText(text);
+  }
+
+  throw new Error("対応しているファイルは .txt、.md、.csv、.tsv です");
 }
 
 function parseSavedWords(rawValue) {
@@ -153,6 +251,30 @@ presetSelect.addEventListener("change", () => {
 customWords.addEventListener("input", () => {
   presetSelect.value = "custom";
   updateCustomEntryVisibility();
+});
+
+wordFile.addEventListener("change", async () => {
+  const file = wordFile.files?.[0];
+  if (!file) return;
+
+  showSaveStatus("ファイルを読み込んでいます");
+
+  try {
+    const words = await extractWordsFromFile(file);
+
+    if (words.length === 0) {
+      showSaveStatus("追加できる文字列が見つかりませんでした");
+      return;
+    }
+
+    appendWordsToTextArea(words);
+    showSaveStatus(`${words.length}件を入力欄に追加しました`);
+  } catch (error) {
+    console.error(error);
+    showSaveStatus(error.message || "ファイルを読み込めませんでした");
+  } finally {
+    wordFile.value = "";
+  }
 });
 
 saveWords.addEventListener("click", () => {

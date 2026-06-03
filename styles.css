@@ -31,6 +31,7 @@ body {
 
 button,
 select,
+input,
 textarea {
   font: inherit;
 }
@@ -111,7 +112,7 @@ button {
 }
 
 .drawer-list {
-  top: calc(clamp(18px, 4vh, 42px) + 200px);
+  top: calc(clamp(18px, 4vh, 42px) + 500px);
 }
 
 .drawer-tab {
@@ -166,12 +167,14 @@ button {
 }
 
 .field,
+.file-field,
 .custom-entry {
   display: grid;
   gap: 7px;
 }
 
-.field span {
+.field span,
+.file-field span {
   color: var(--text-muted);
   font-size: 0.78rem;
 }
@@ -182,6 +185,7 @@ button {
 }
 
 select,
+input[type="file"],
 textarea {
   width: 100%;
   color: var(--text-main);
@@ -204,7 +208,24 @@ textarea {
   line-height: 1.6;
 }
 
+input[type="file"] {
+  min-height: 42px;
+  padding: 9px 10px;
+}
+
+input[type="file"]::file-selector-button {
+  min-height: 28px;
+  margin-right: 10px;
+  color: #10201d;
+  font: inherit;
+  font-weight: 700;
+  background: var(--accent);
+  border: 0;
+  border-radius: 6px;
+}
+
 select:focus,
+input[type="file"]:focus,
 textarea:focus,
 button:focus-visible {
   border-color: rgba(185, 222, 212, 0.72);
